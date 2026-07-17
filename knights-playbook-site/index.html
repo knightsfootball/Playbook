@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#101c3f">
+<title>Knights Offense — 2025 Playbook</title>
+<style>
+  :root{
+    --navy:#101c3f; --navy-2:#1a2a5c; --red:#c8102e;
+    --white:#ffffff; --paper:#f4f5f9; --ink:#141a2e; --muted:#6a7290;
+    --line:#e3e6ef; --shadow:0 2px 10px rgba(16,28,63,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper); color:var(--ink);
+  }
+  a{text-decoration:none;color:inherit}
+
+  /* hidden radio buttons that drive the tabs (pure CSS, no JS needed) */
+  .tabradio{position:absolute;opacity:0;pointer-events:none}
+
+  /* ---------- HEADER ---------- */
+  header{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+    color:var(--white);
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 12px;
+    border-bottom:3px solid var(--red);
+  }
+  .brand{display:flex;align-items:center;gap:12px;max-width:1000px;margin:0 auto}
+  .brand img{width:44px;height:44px;border-radius:50%;background:var(--white);object-fit:cover;border:2px solid var(--red)}
+  .brand .t1{font-size:19px;font-weight:800;letter-spacing:.06em;line-height:1.1;text-transform:uppercase;font-style:italic}
+  .brand .t2{font-size:11px;font-weight:600;letter-spacing:.22em;color:#b9c2e0;text-transform:uppercase;margin-top:2px}
+
+  .searchwrap{max-width:1000px;margin:10px auto 0;position:relative}
+  .searchwrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.55}
+  #search{
+    width:100%;padding:10px 36px 10px 38px;border-radius:10px;border:none;
+    background:rgba(255,255,255,.14);color:var(--white);font-size:15px;outline:none;
+    -webkit-appearance:none;
+  }
+  #search::placeholder{color:#aab3d4}
+  #search:focus{background:rgba(255,255,255,.22)}
+  #clearbtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:none;background:none;color:#c6cde8;font-size:17px;padding:6px 8px;cursor:pointer;display:none}
+
+  /* ---------- TABS ---------- */
+  nav{
+    background:var(--white); position:-webkit-sticky; position:sticky; top:0; z-index:40;
+    box-shadow:var(--shadow);
+  }
+  .tabs{
+    display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;
+    padding:8px 12px;max-width:1000px;margin:0 auto;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  label.tab{
+    flex:0 0 auto;cursor:pointer;
+    padding:9px 15px;border-radius:999px;font-size:14px;font-weight:700;
+    color:var(--muted);letter-spacing:.02em;white-space:nowrap;display:block;
+  }
+  .tab .cnt{font-size:11px;font-weight:700;opacity:.65;margin-left:4px}
+
+  /* which tab is lit + which section shows — driven by the radios */
+  #t0:checked ~ nav label[for="t0"]{background:var(--red);color:var(--white)}
+  #t0:checked ~ main .sec-0{display:block}
+  #t1:checked ~ nav label[for="t1"]{background:var(--red);color:var(--white)}
+  #t1:checked ~ main .sec-1{display:block}
+  #t2:checked ~ nav label[for="t2"]{background:var(--red);color:var(--white)}
+  #t2:checked ~ main .sec-2{display:block}
+  #t3:checked ~ nav label[for="t3"]{background:var(--red);color:var(--white)}
+  #t3:checked ~ main .sec-3{display:block}
+  #t4:checked ~ nav label[for="t4"]{background:var(--red);color:var(--white)}
+  #t4:checked ~ main .sec-4{display:block}
+
+  /* ---------- CONTENT ---------- */
+  main{max-width:1000px;margin:0 auto;padding:16px 14px calc(env(safe-area-inset-bottom,0px) + 40px)}
+  .tabpane{display:none}
+  body.searching .tabpane{display:block !important}
+  body.searching .tabpane.nomatch{display:none !important}
+  .grouphead{display:flex;align-items:center;gap:10px;margin:22px 2px 10px}
+  .grouphead .bar{width:5px;height:20px;background:var(--red);border-radius:3px}
+  .grouphead h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--navy)}
+  .grouphead .n{font-size:12px;color:var(--muted);font-weight:600}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+  @media(min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
+  .card{
+    background:var(--white);border-radius:12px;overflow:hidden;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+  .card .go{display:block;cursor:pointer}
+  .card .thumb{background:#fff;overflow:hidden;border-bottom:2px solid var(--navy)}
+  .card .thumb img{width:100%;height:auto;display:block}
+  .card .label{padding:9px 11px 10px}
+  .card .name{font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.25}
+  .card .sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .card.hide{display:none}
+  .card .vbar{display:none}
+
+  #noresults{display:none;text-align:center;color:var(--muted);padding:60px 20px;font-size:15px}
+  body.noresults #noresults{display:block}
+
+  /* ---------- FULLSCREEN (pure CSS ":target" viewer) ---------- */
+  .card:target{
+    position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;
+    background:#0a0f22;border-radius:0;border:none;overflow:auto;
+    display:flex;flex-direction:column;
+  }
+  .card:target .go{flex:1;display:flex;flex-direction:column;cursor:default;min-height:0}
+  .card:target .label{
+    order:1;
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 60px 12px 16px;
+  }
+  .card:target .name{color:#fff;font-size:16px}
+  .card:target .sub{color:#9aa5cc}
+  .card:target .thumb{
+    order:2;flex:1;border:none;background:transparent;
+    display:flex;align-items:center;justify-content:center;min-height:0;
+  }
+  .card:target .thumb img{
+    width:100%;height:100%;object-fit:contain;touch-action:pinch-zoom;
+  }
+  .card:target .vbar{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 14px);
+  }
+  .vbar a{
+    border-radius:10px;background:var(--red);color:#fff;
+    font-size:14px;font-weight:800;padding:11px 20px;letter-spacing:.04em;
+  }
+  .vbar .spacer{flex:1}
+  .vbar a.dis{background:#3a4468;color:#8891b4;pointer-events:none}
+  .card:target .x{
+    display:block;position:absolute;right:12px;
+    top:calc(env(safe-area-inset-top,0px) + 10px);
+    width:38px;height:38px;border-radius:50%;
+    background:rgba(255,255,255,.14);color:#fff;font-size:17px;
+    text-align:center;line-height:38px;z-index:2;
+  }
+  .card .x{display:none}
+
+  footer{text-align:center;color:var(--muted);font-size:11.5px;padding:0 16px 26px;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<!-- tab state (hidden radio buttons — make tabs work with zero JavaScript) -->
+<input class="tabradio" type="radio" name="tabs" id="t0" checked>
+<input class="tabradio" type="radio" name="tabs" id="t1">
+<input class="tabradio" type="radio" name="tabs" id="t2">
+<input class="tabradio" type="radio" name="tabs" id="t3">
+<input class="tabradio" type="radio" name="tabs" id="t4">
+
+<header>
+  <div class="brand">
+    <img src="images/logo.png" alt="Knights logo">
+    <div>
+      <div class="t1">Knights Offense</div>
+      <div class="t2">2025 USA Playbook</div>
+    </div>
+  </div>
+  <div class="searchwrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input id="search" type="search" placeholder="Search plays… (e.g. 44 Lead, Toss, Flood)" autocomplete="off">
+    <button id="clearbtn" aria-label="Clear search">✕</button>
+  </div>
+</header>
+
+<nav>
+  <div class="tabs">
+      <label class="tab" for="t0">Formations<span class="cnt">10</span></label>
+      <label class="tab" for="t1">Blocking<span class="cnt">5</span></label>
+      <label class="tab" for="t2">Pistol<span class="cnt">30</span></label>
+      <label class="tab" for="t3">Twins<span class="cnt">20</span></label>
+      <label class="tab" for="t4">Twins Gun<span class="cnt">20</span></label>
+  </div>
+</nav>
+
+<!-- ====================================================================
+  ██  EDIT YOUR PLAYBOOK HERE  ██
+  Each play is one <div class="card"> block below.
+  To ADD a play: drop its image in the images/ folder, copy any card
+  block, and update the id, data-title, image path, and name.
+  To REMOVE a play: delete its block (and fix the Prev/Next links of
+  the plays before/after it, or just ask Claude to do it for you).
+===================================================================== -->
+<main id="content">
+
+<!-- ================= FORMATIONS TAB ================= -->
+<section class="tabpane sec-0" data-section="Formations">
+  <div class="grouphead"><div class="bar"></div><h2>Alignments</h2><span class="n">10</span></div>
+  <div class="grid">
+    <div class="card" id="p2" data-title="Pistol Right" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p2"><div class="thumb"><img loading="lazy" src="images/page-02.jpg" alt="Pistol Right"></div><div class="label"><div class="name">Pistol Right</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a class="dis">&#8592; Prev</a><span class="spacer"></span><a href="#p3">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p3" data-title="Pistol Left" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p3"><div class="thumb"><img loading="lazy" src="images/page-03.jpg" alt="Pistol Left"></div><div class="label"><div class="name">Pistol Left</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p2">&#8592; Prev</a><span class="spacer"></span><a href="#p4">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p4" data-title="Twins Right" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p4"><div class="thumb"><img loading="lazy" src="images/page-04.jpg" alt="Twins Right"></div><div class="label"><div class="name">Twins Right</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p3">&#8592; Prev</a><span class="spacer"></span><a href="#p5">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p5" data-title="Twins Left" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p5"><div class="thumb"><img loading="lazy" src="images/page-05.jpg" alt="Twins Left"></div><div class="label"><div class="name">Twins Left</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p4">&#8592; Prev</a><span class="spacer"></span><a href="#p6">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p6" data-title="Twins Right Gun" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p6"><div class="thumb"><img loading="lazy" src="images/page-06.jpg" alt="Twins Right Gun"></div><div class="label"><div class="name">Twins Right Gun</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p5">&#8592; Prev</a><span class="spacer"></span><a href="#p7">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p7" data-title="Twins Left Gun" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p7"><div class="thumb"><img loading="lazy" src="images/page-07.jpg" alt="Twins Left Gun"></div><div class="label"><div class="name">Twins Left Gun</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p6">&#8592; Prev</a><span class="spacer"></span><a href="#p8">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p8" data-title="Tight Right" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p8"><div class="thumb"><img loading="lazy" src="images/page-08.jpg" alt="Tight Right"></div><div class="label"><div class="name">Tight Right</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p7">&#8592; Prev</a><span class="spacer"></span><a href="#p9">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p9" data-title="Tight Left" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p9"><div class="thumb"><img loading="lazy" src="images/page-09.jpg" alt="Tight Left"></div><div class="label"><div class="name">Tight Left</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p8">&#8592; Prev</a><span class="spacer"></span><a href="#p10">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p10" data-title="Stack Right" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p10"><div class="thumb"><img loading="lazy" src="images/page-10.jpg" alt="Stack Right"></div><div class="label"><div class="name">Stack Right</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p9">&#8592; Prev</a><span class="spacer"></span><a href="#p11">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p11" data-title="Stack Left" data-group="Alignments" data-sec="Formations">
+      <a class="go" href="#p11"><div class="thumb"><img loading="lazy" src="images/page-11.jpg" alt="Stack Left"></div><div class="label"><div class="name">Stack Left</div><div class="sub">Alignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p10">&#8592; Prev</a><span class="spacer"></span><a class="dis">Next &#8594;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BLOCKING TAB ================= -->
+<section class="tabpane sec-1" data-section="Blocking">
+  <div class="grouphead"><div class="bar"></div><h2>Assignments</h2><span class="n">5</span></div>
+  <div class="grid">
+    <div class="card" id="p12" data-title="Pistol Right Lucy" data-group="Assignments" data-sec="Blocking">
+      <a class="go" href="#p12"><div class="thumb"><img loading="lazy" src="images/page-12.jpg" alt="Pistol Right Lucy"></div><div class="label"><div class="name">Pistol Right Lucy</div><div class="sub">Assignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a class="dis">&#8592; Prev</a><span class="spacer"></span><a href="#p13">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p13" data-title="Pistol Left Ricky" data-group="Assignments" data-sec="Blocking">
+      <a class="go" href="#p13"><div class="thumb"><img loading="lazy" src="images/page-13.jpg" alt="Pistol Left Ricky"></div><div class="label"><div class="name">Pistol Left Ricky</div><div class="sub">Assignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p12">&#8592; Prev</a><span class="spacer"></span><a href="#p14">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p14" data-title="Pistol Left Ricky Power" data-group="Assignments" data-sec="Blocking">
+      <a class="go" href="#p14"><div class="thumb"><img loading="lazy" src="images/page-14.jpg" alt="Pistol Left Ricky Power"></div><div class="label"><div class="name">Pistol Left Ricky Power</div><div class="sub">Assignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p13">&#8592; Prev</a><span class="spacer"></span><a href="#p15">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p15" data-title="Pistol Right Lucy Power" data-group="Assignments" data-sec="Blocking">
+      <a class="go" href="#p15"><div class="thumb"><img loading="lazy" src="images/page-15.jpg" alt="Pistol Right Lucy Power"></div><div class="label"><div class="name">Pistol Right Lucy Power</div><div class="sub">Assignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p14">&#8592; Prev</a><span class="spacer"></span><a href="#p16">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p16" data-title="Power" data-group="Assignments" data-sec="Blocking">
+      <a class="go" href="#p16"><div class="thumb"><img loading="lazy" src="images/page-16.jpg" alt="Power"></div><div class="label"><div class="name">Power</div><div class="sub">Assignments</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p15">&#8592; Prev</a><span class="spacer"></span><a class="dis">Next &#8594;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PISTOL TAB ================= -->
+<section class="tabpane sec-2" data-section="Pistol">
+  <div class="grouphead"><div class="bar"></div><h2>Pistol Right</h2><span class="n">15</span></div>
+  <div class="grid">
+    <div class="card" id="p18" data-title="Pistol Right Lucy 3 Dive" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p18"><div class="thumb"><img loading="lazy" src="images/page-18.jpg" alt="Pistol Right Lucy 3 Dive"></div><div class="label"><div class="name">Pistol Right Lucy 3 Dive</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a class="dis">&#8592; Prev</a><span class="spacer"></span><a href="#p19">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p19" data-title="Pistol Right Lucy 5 Dive" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p19"><div class="thumb"><img loading="lazy" src="images/page-19.jpg" alt="Pistol Right Lucy 5 Dive"></div><div class="label"><div class="name">Pistol Right Lucy 5 Dive</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p18">&#8592; Prev</a><span class="spacer"></span><a href="#p20">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p20" data-title="Pistol Right 44 Lead" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p20"><div class="thumb"><img loading="lazy" src="images/page-20.jpg" alt="Pistol Right 44 Lead"></div><div class="label"><div class="name">Pistol Right 44 Lead</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p19">&#8592; Prev</a><span class="spacer"></span><a href="#p21">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p21" data-title="Pistol Right 55 Lead" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p21"><div class="thumb"><img loading="lazy" src="images/page-21.jpg" alt="Pistol Right 55 Lead"></div><div class="label"><div class="name">Pistol Right 55 Lead</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p20">&#8592; Prev</a><span class="spacer"></span><a href="#p22">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p22" data-title="Pistol Right 6 Toss" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p22"><div class="thumb"><img loading="lazy" src="images/page-22.jpg" alt="Pistol Right 6 Toss"></div><div class="label"><div class="name">Pistol Right 6 Toss</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p21">&#8592; Prev</a><span class="spacer"></span><a href="#p23">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p23" data-title="Pistol Right Lucy 77 QB Lead" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p23"><div class="thumb"><img loading="lazy" src="images/page-23.jpg" alt="Pistol Right Lucy 77 QB Lead"></div><div class="label"><div class="name">Pistol Right Lucy 77 QB Lead</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p22">&#8592; Prev</a><span class="spacer"></span><a href="#p24">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p24" data-title="Pistol Right 47C" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p24"><div class="thumb"><img loading="lazy" src="images/page-24.jpg" alt="Pistol Right 47C"></div><div class="label"><div class="name">Pistol Right 47C</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p23">&#8592; Prev</a><span class="spacer"></span><a href="#p25">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p25" data-title="Pistol Right 77 Toss Shovel" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p25"><div class="thumb"><img loading="lazy" src="images/page-25.jpg" alt="Pistol Right 77 Toss Shovel"></div><div class="label"><div class="name">Pistol Right 77 Toss Shovel</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p24">&#8592; Prev</a><span class="spacer"></span><a href="#p26">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p26" data-title="Pistol Right Lucy Leak" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p26"><div class="thumb"><img loading="lazy" src="images/page-26.jpg" alt="Pistol Right Lucy Leak"></div><div class="label"><div class="name">Pistol Right Lucy Leak</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p25">&#8592; Prev</a><span class="spacer"></span><a href="#p27">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p27" data-title="Pistol Right Deebo" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p27"><div class="thumb"><img loading="lazy" src="images/page-27.jpg" alt="Pistol Right Deebo"></div><div class="label"><div class="name">Pistol Right Deebo</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p26">&#8592; Prev</a><span class="spacer"></span><a href="#p28">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p28" data-title="Pistol Right Flood" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p28"><div class="thumb"><img loading="lazy" src="images/page-28.jpg" alt="Pistol Right Flood"></div><div class="label"><div class="name">Pistol Right Flood</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p27">&#8592; Prev</a><span class="spacer"></span><a href="#p29">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p29" data-title="Pistol Right Spot" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p29"><div class="thumb"><img loading="lazy" src="images/page-29.jpg" alt="Pistol Right Spot"></div><div class="label"><div class="name">Pistol Right Spot</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p28">&#8592; Prev</a><span class="spacer"></span><a href="#p30">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p30" data-title="Pistol Right Wheel" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p30"><div class="thumb"><img loading="lazy" src="images/page-30.jpg" alt="Pistol Right Wheel"></div><div class="label"><div class="name">Pistol Right Wheel</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p29">&#8592; Prev</a><span class="spacer"></span><a href="#p31">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p31" data-title="Pistol Right Divide" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p31"><div class="thumb"><img loading="lazy" src="images/page-31.jpg" alt="Pistol Right Divide"></div><div class="label"><div class="name">Pistol Right Divide</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p30">&#8592; Prev</a><span class="spacer"></span><a href="#p32">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p32" data-title="Pistol Right Fake SS Release" data-group="Pistol Right" data-sec="Pistol">
+      <a class="go" href="#p32"><div class="thumb"><img loading="lazy" src="images/page-32.jpg" alt="Pistol Right Fake SS Release"></div><div class="label"><div class="name">Pistol Right Fake SS Release</div><div class="sub">Pistol Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p31">&#8592; Prev</a><span class="spacer"></span><a href="#p33">Next &#8594;</a></div>
+    </div>
+  </div>
+  <div class="grouphead"><div class="bar"></div><h2>Pistol Left</h2><span class="n">15</span></div>
+  <div class="grid">
+    <div class="card" id="p33" data-title="Pistol Left Ricky 2 Dive" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p33"><div class="thumb"><img loading="lazy" src="images/page-33.jpg" alt="Pistol Left Ricky 2 Dive"></div><div class="label"><div class="name">Pistol Left Ricky 2 Dive</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p32">&#8592; Prev</a><span class="spacer"></span><a href="#p34">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p34" data-title="Pistol Left Ricky 4 Dive" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p34"><div class="thumb"><img loading="lazy" src="images/page-34.jpg" alt="Pistol Left Ricky 4 Dive"></div><div class="label"><div class="name">Pistol Left Ricky 4 Dive</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p33">&#8592; Prev</a><span class="spacer"></span><a href="#p35">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p35" data-title="Pistol Left 55 Lead" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p35"><div class="thumb"><img loading="lazy" src="images/page-35.jpg" alt="Pistol Left 55 Lead"></div><div class="label"><div class="name">Pistol Left 55 Lead</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p34">&#8592; Prev</a><span class="spacer"></span><a href="#p36">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p36" data-title="Pistol Left 44 Lead" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p36"><div class="thumb"><img loading="lazy" src="images/page-36.jpg" alt="Pistol Left 44 Lead"></div><div class="label"><div class="name">Pistol Left 44 Lead</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p35">&#8592; Prev</a><span class="spacer"></span><a href="#p37">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p37" data-title="Pistol Left 7 Toss" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p37"><div class="thumb"><img loading="lazy" src="images/page-37.jpg" alt="Pistol Left 7 Toss"></div><div class="label"><div class="name">Pistol Left 7 Toss</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p36">&#8592; Prev</a><span class="spacer"></span><a href="#p38">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p38" data-title="Pistol Left Ricky 66 QB Lead" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p38"><div class="thumb"><img loading="lazy" src="images/page-38.jpg" alt="Pistol Left Ricky 66 QB Lead"></div><div class="label"><div class="name">Pistol Left Ricky 66 QB Lead</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p37">&#8592; Prev</a><span class="spacer"></span><a href="#p39">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p39" data-title="Pistol Left 56C" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p39"><div class="thumb"><img loading="lazy" src="images/page-39.jpg" alt="Pistol Left 56C"></div><div class="label"><div class="name">Pistol Left 56C</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p38">&#8592; Prev</a><span class="spacer"></span><a href="#p40">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p40" data-title="Pistol Left 66 Toss Shovel" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p40"><div class="thumb"><img loading="lazy" src="images/page-40.jpg" alt="Pistol Left 66 Toss Shovel"></div><div class="label"><div class="name">Pistol Left 66 Toss Shovel</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p39">&#8592; Prev</a><span class="spacer"></span><a href="#p41">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p41" data-title="Pistol Left Ricky Leak" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p41"><div class="thumb"><img loading="lazy" src="images/page-41.jpg" alt="Pistol Left Ricky Leak"></div><div class="label"><div class="name">Pistol Left Ricky Leak</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p40">&#8592; Prev</a><span class="spacer"></span><a href="#p42">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p42" data-title="Pistol Left Deebo" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p42"><div class="thumb"><img loading="lazy" src="images/page-42.jpg" alt="Pistol Left Deebo"></div><div class="label"><div class="name">Pistol Left Deebo</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p41">&#8592; Prev</a><span class="spacer"></span><a href="#p43">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p43" data-title="Pistol Left Flood" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p43"><div class="thumb"><img loading="lazy" src="images/page-43.jpg" alt="Pistol Left Flood"></div><div class="label"><div class="name">Pistol Left Flood</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p42">&#8592; Prev</a><span class="spacer"></span><a href="#p44">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p44" data-title="Pistol Left Spot" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p44"><div class="thumb"><img loading="lazy" src="images/page-44.jpg" alt="Pistol Left Spot"></div><div class="label"><div class="name">Pistol Left Spot</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p43">&#8592; Prev</a><span class="spacer"></span><a href="#p45">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p45" data-title="Pistol Left Wheel" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p45"><div class="thumb"><img loading="lazy" src="images/page-45.jpg" alt="Pistol Left Wheel"></div><div class="label"><div class="name">Pistol Left Wheel</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p44">&#8592; Prev</a><span class="spacer"></span><a href="#p46">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p46" data-title="Pistol Left Divide" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p46"><div class="thumb"><img loading="lazy" src="images/page-46.jpg" alt="Pistol Left Divide"></div><div class="label"><div class="name">Pistol Left Divide</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p45">&#8592; Prev</a><span class="spacer"></span><a href="#p47">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p47" data-title="Pistol Left Fake SS Release" data-group="Pistol Left" data-sec="Pistol">
+      <a class="go" href="#p47"><div class="thumb"><img loading="lazy" src="images/page-47.jpg" alt="Pistol Left Fake SS Release"></div><div class="label"><div class="name">Pistol Left Fake SS Release</div><div class="sub">Pistol Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p46">&#8592; Prev</a><span class="spacer"></span><a class="dis">Next &#8594;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TWINS TAB ================= -->
+<section class="tabpane sec-3" data-section="Twins">
+  <div class="grouphead"><div class="bar"></div><h2>Twins Right</h2><span class="n">10</span></div>
+  <div class="grid">
+    <div class="card" id="p49" data-title="Twins Right 3 Dive" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p49"><div class="thumb"><img loading="lazy" src="images/page-49.jpg" alt="Twins Right 3 Dive"></div><div class="label"><div class="name">Twins Right 3 Dive</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a class="dis">&#8592; Prev</a><span class="spacer"></span><a href="#p50">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p50" data-title="Twins Right 2 Dive" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p50"><div class="thumb"><img loading="lazy" src="images/page-50.jpg" alt="Twins Right 2 Dive"></div><div class="label"><div class="name">Twins Right 2 Dive</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p49">&#8592; Prev</a><span class="spacer"></span><a href="#p51">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p51" data-title="Twins Right 33 Lead" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p51"><div class="thumb"><img loading="lazy" src="images/page-51.jpg" alt="Twins Right 33 Lead"></div><div class="label"><div class="name">Twins Right 33 Lead</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p50">&#8592; Prev</a><span class="spacer"></span><a href="#p52">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p52" data-title="Twins Right 22 Lead" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p52"><div class="thumb"><img loading="lazy" src="images/page-52.jpg" alt="Twins Right 22 Lead"></div><div class="label"><div class="name">Twins Right 22 Lead</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p51">&#8592; Prev</a><span class="spacer"></span><a href="#p53">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p53" data-title="Twins Right 55 Lead" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p53"><div class="thumb"><img loading="lazy" src="images/page-53.jpg" alt="Twins Right 55 Lead"></div><div class="label"><div class="name">Twins Right 55 Lead</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p52">&#8592; Prev</a><span class="spacer"></span><a href="#p54">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p54" data-title="Twins Right 44 Lead" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p54"><div class="thumb"><img loading="lazy" src="images/page-54.jpg" alt="Twins Right 44 Lead"></div><div class="label"><div class="name">Twins Right 44 Lead</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p53">&#8592; Prev</a><span class="spacer"></span><a href="#p55">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p55" data-title="Twins Right 66 Toss" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p55"><div class="thumb"><img loading="lazy" src="images/page-55.jpg" alt="Twins Right 66 Toss"></div><div class="label"><div class="name">Twins Right 66 Toss</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p54">&#8592; Prev</a><span class="spacer"></span><a href="#p56">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p56" data-title="Twins Right 77 Toss" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p56"><div class="thumb"><img loading="lazy" src="images/page-56.jpg" alt="Twins Right 77 Toss"></div><div class="label"><div class="name">Twins Right 77 Toss</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p55">&#8592; Prev</a><span class="spacer"></span><a href="#p57">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p57" data-title="Twins Right 56 C" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p57"><div class="thumb"><img loading="lazy" src="images/page-57.jpg" alt="Twins Right 56 C"></div><div class="label"><div class="name">Twins Right 56 C</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p56">&#8592; Prev</a><span class="spacer"></span><a href="#p58">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p58" data-title="Twins Right 47 C" data-group="Twins Right" data-sec="Twins">
+      <a class="go" href="#p58"><div class="thumb"><img loading="lazy" src="images/page-58.jpg" alt="Twins Right 47 C"></div><div class="label"><div class="name">Twins Right 47 C</div><div class="sub">Twins Right</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p57">&#8592; Prev</a><span class="spacer"></span><a href="#p59">Next &#8594;</a></div>
+    </div>
+  </div>
+  <div class="grouphead"><div class="bar"></div><h2>Twins Left</h2><span class="n">10</span></div>
+  <div class="grid">
+    <div class="card" id="p59" data-title="Twins Left 3 Dive" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p59"><div class="thumb"><img loading="lazy" src="images/page-59.jpg" alt="Twins Left 3 Dive"></div><div class="label"><div class="name">Twins Left 3 Dive</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p58">&#8592; Prev</a><span class="spacer"></span><a href="#p60">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p60" data-title="Twins Left 2 Dive" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p60"><div class="thumb"><img loading="lazy" src="images/page-60.jpg" alt="Twins Left 2 Dive"></div><div class="label"><div class="name">Twins Left 2 Dive</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p59">&#8592; Prev</a><span class="spacer"></span><a href="#p61">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p61" data-title="Twins Left 33 Lead" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p61"><div class="thumb"><img loading="lazy" src="images/page-61.jpg" alt="Twins Left 33 Lead"></div><div class="label"><div class="name">Twins Left 33 Lead</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p60">&#8592; Prev</a><span class="spacer"></span><a href="#p62">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p62" data-title="Twins Left 22 Lead" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p62"><div class="thumb"><img loading="lazy" src="images/page-62.jpg" alt="Twins Left 22 Lead"></div><div class="label"><div class="name">Twins Left 22 Lead</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p61">&#8592; Prev</a><span class="spacer"></span><a href="#p63">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p63" data-title="Twins Left 55 Lead" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p63"><div class="thumb"><img loading="lazy" src="images/page-63.jpg" alt="Twins Left 55 Lead"></div><div class="label"><div class="name">Twins Left 55 Lead</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p62">&#8592; Prev</a><span class="spacer"></span><a href="#p64">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p64" data-title="Twins Left 44 Lead" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p64"><div class="thumb"><img loading="lazy" src="images/page-64.jpg" alt="Twins Left 44 Lead"></div><div class="label"><div class="name">Twins Left 44 Lead</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p63">&#8592; Prev</a><span class="spacer"></span><a href="#p65">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p65" data-title="Twins Left 66 Toss" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p65"><div class="thumb"><img loading="lazy" src="images/page-65.jpg" alt="Twins Left 66 Toss"></div><div class="label"><div class="name">Twins Left 66 Toss</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p64">&#8592; Prev</a><span class="spacer"></span><a href="#p66">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p66" data-title="Twins Left 77 Toss" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p66"><div class="thumb"><img loading="lazy" src="images/page-66.jpg" alt="Twins Left 77 Toss"></div><div class="label"><div class="name">Twins Left 77 Toss</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p65">&#8592; Prev</a><span class="spacer"></span><a href="#p67">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p67" data-title="Twins Left 56 C" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p67"><div class="thumb"><img loading="lazy" src="images/page-67.jpg" alt="Twins Left 56 C"></div><div class="label"><div class="name">Twins Left 56 C</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p66">&#8592; Prev</a><span class="spacer"></span><a href="#p68">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p68" data-title="Twins Left 47 C" data-group="Twins Left" data-sec="Twins">
+      <a class="go" href="#p68"><div class="thumb"><img loading="lazy" src="images/page-68.jpg" alt="Twins Left 47 C"></div><div class="label"><div class="name">Twins Left 47 C</div><div class="sub">Twins Left</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p67">&#8592; Prev</a><span class="spacer"></span><a class="dis">Next &#8594;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TWINS GUN TAB ================= -->
+<section class="tabpane sec-4" data-section="Twins Gun">
+  <div class="grouphead"><div class="bar"></div><h2>Twins Right Gun</h2><span class="n">10</span></div>
+  <div class="grid">
+    <div class="card" id="p70" data-title="Twins Right Gun 3 Dive" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p70"><div class="thumb"><img loading="lazy" src="images/page-70.jpg" alt="Twins Right Gun 3 Dive"></div><div class="label"><div class="name">Twins Right Gun 3 Dive</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a class="dis">&#8592; Prev</a><span class="spacer"></span><a href="#p71">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p71" data-title="Twins Right Gun 2 Dive" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p71"><div class="thumb"><img loading="lazy" src="images/page-71.jpg" alt="Twins Right Gun 2 Dive"></div><div class="label"><div class="name">Twins Right Gun 2 Dive</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p70">&#8592; Prev</a><span class="spacer"></span><a href="#p72">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p72" data-title="Twins Right Gun 22 Lead" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p72"><div class="thumb"><img loading="lazy" src="images/page-72.jpg" alt="Twins Right Gun 22 Lead"></div><div class="label"><div class="name">Twins Right Gun 22 Lead</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p71">&#8592; Prev</a><span class="spacer"></span><a href="#p73">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p73" data-title="Twins Right Gun 33 Lead" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p73"><div class="thumb"><img loading="lazy" src="images/page-73.jpg" alt="Twins Right Gun 33 Lead"></div><div class="label"><div class="name">Twins Right Gun 33 Lead</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p72">&#8592; Prev</a><span class="spacer"></span><a href="#p74">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p74" data-title="Twins Right Gun 44 Lead" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p74"><div class="thumb"><img loading="lazy" src="images/page-74.jpg" alt="Twins Right Gun 44 Lead"></div><div class="label"><div class="name">Twins Right Gun 44 Lead</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p73">&#8592; Prev</a><span class="spacer"></span><a href="#p75">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p75" data-title="Twins Right Gun 55 Lead" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p75"><div class="thumb"><img loading="lazy" src="images/page-75.jpg" alt="Twins Right Gun 55 Lead"></div><div class="label"><div class="name">Twins Right Gun 55 Lead</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p74">&#8592; Prev</a><span class="spacer"></span><a href="#p76">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p76" data-title="Twins Right Gun 47 C" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p76"><div class="thumb"><img loading="lazy" src="images/page-76.jpg" alt="Twins Right Gun 47 C"></div><div class="label"><div class="name">Twins Right Gun 47 C</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p75">&#8592; Prev</a><span class="spacer"></span><a href="#p77">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p77" data-title="Twins Right Gun Screen Left" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p77"><div class="thumb"><img loading="lazy" src="images/page-77.jpg" alt="Twins Right Gun Screen Left"></div><div class="label"><div class="name">Twins Right Gun Screen Left</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p76">&#8592; Prev</a><span class="spacer"></span><a href="#p78">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p78" data-title="Twins Right Gun In &#x27;N Out (+Alert)" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p78"><div class="thumb"><img loading="lazy" src="images/page-78.jpg" alt="Twins Right Gun In &#x27;N Out (+Alert)"></div><div class="label"><div class="name">Twins Right Gun In &#x27;N Out (+Alert)</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p77">&#8592; Prev</a><span class="spacer"></span><a href="#p79">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p79" data-title="Twins Right Gun Smash" data-group="Twins Right Gun" data-sec="Twins Gun">
+      <a class="go" href="#p79"><div class="thumb"><img loading="lazy" src="images/page-79.jpg" alt="Twins Right Gun Smash"></div><div class="label"><div class="name">Twins Right Gun Smash</div><div class="sub">Twins Right Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p78">&#8592; Prev</a><span class="spacer"></span><a href="#p80">Next &#8594;</a></div>
+    </div>
+  </div>
+  <div class="grouphead"><div class="bar"></div><h2>Twins Left Gun</h2><span class="n">10</span></div>
+  <div class="grid">
+    <div class="card" id="p80" data-title="Twins Left Gun 3 Dive" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p80"><div class="thumb"><img loading="lazy" src="images/page-80.jpg" alt="Twins Left Gun 3 Dive"></div><div class="label"><div class="name">Twins Left Gun 3 Dive</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p79">&#8592; Prev</a><span class="spacer"></span><a href="#p81">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p81" data-title="Twins Left Gun 2 Dive" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p81"><div class="thumb"><img loading="lazy" src="images/page-81.jpg" alt="Twins Left Gun 2 Dive"></div><div class="label"><div class="name">Twins Left Gun 2 Dive</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p80">&#8592; Prev</a><span class="spacer"></span><a href="#p82">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p82" data-title="Twins Left Gun 22 Lead" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p82"><div class="thumb"><img loading="lazy" src="images/page-82.jpg" alt="Twins Left Gun 22 Lead"></div><div class="label"><div class="name">Twins Left Gun 22 Lead</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p81">&#8592; Prev</a><span class="spacer"></span><a href="#p83">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p83" data-title="Twins Left Gun 33 Lead" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p83"><div class="thumb"><img loading="lazy" src="images/page-83.jpg" alt="Twins Left Gun 33 Lead"></div><div class="label"><div class="name">Twins Left Gun 33 Lead</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p82">&#8592; Prev</a><span class="spacer"></span><a href="#p84">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p84" data-title="Twins Left Gun 44 Lead" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p84"><div class="thumb"><img loading="lazy" src="images/page-84.jpg" alt="Twins Left Gun 44 Lead"></div><div class="label"><div class="name">Twins Left Gun 44 Lead</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p83">&#8592; Prev</a><span class="spacer"></span><a href="#p85">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p85" data-title="Twins Left Gun 55 Lead" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p85"><div class="thumb"><img loading="lazy" src="images/page-85.jpg" alt="Twins Left Gun 55 Lead"></div><div class="label"><div class="name">Twins Left Gun 55 Lead</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p84">&#8592; Prev</a><span class="spacer"></span><a href="#p86">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p86" data-title="Twins Left Gun 56 C" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p86"><div class="thumb"><img loading="lazy" src="images/page-86.jpg" alt="Twins Left Gun 56 C"></div><div class="label"><div class="name">Twins Left Gun 56 C</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p85">&#8592; Prev</a><span class="spacer"></span><a href="#p87">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p87" data-title="Twins Left Gun Screen Left" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p87"><div class="thumb"><img loading="lazy" src="images/page-87.jpg" alt="Twins Left Gun Screen Left"></div><div class="label"><div class="name">Twins Left Gun Screen Left</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p86">&#8592; Prev</a><span class="spacer"></span><a href="#p88">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p88" data-title="Twins Left Gun In &#x27;N Out (+Alert)" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p88"><div class="thumb"><img loading="lazy" src="images/page-88.jpg" alt="Twins Left Gun In &#x27;N Out (+Alert)"></div><div class="label"><div class="name">Twins Left Gun In &#x27;N Out (+Alert)</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p87">&#8592; Prev</a><span class="spacer"></span><a href="#p89">Next &#8594;</a></div>
+    </div>
+    <div class="card" id="p89" data-title="Twins Left Gun Smash" data-group="Twins Left Gun" data-sec="Twins Gun">
+      <a class="go" href="#p89"><div class="thumb"><img loading="lazy" src="images/page-89.jpg" alt="Twins Left Gun Smash"></div><div class="label"><div class="name">Twins Left Gun Smash</div><div class="sub">Twins Left Gun</div></div></a>
+      <a class="x" href="#closed">&#10005;</a>
+      <div class="vbar"><a href="#p88">&#8592; Prev</a><span class="spacer"></span><a class="dis">Next &#8594;</a></div>
+    </div>
+  </div>
+</section>
+
+<div id="noresults">No plays match your search.</div>
+</main>
+
+<footer>KNIGHTS FOOTBALL &middot; Tap any play to view full screen &middot; Pinch to zoom</footer>
+
+<script>
+/* Search only (tabs and fullscreen work without JavaScript). */
+(function(){
+  var searchEl = document.getElementById('search');
+  var clearBtn = document.getElementById('clearbtn');
+  if(!searchEl) return;
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var panes = [].slice.call(document.querySelectorAll('.tabpane'));
+
+  function refreshGroups(){
+    panes.forEach(function(p){
+      var heads = p.querySelectorAll('.grouphead');
+      var grids = p.querySelectorAll('.grid');
+      for(var i=0;i<grids.length;i++){
+        var any = grids[i].querySelector('.card:not(.hide)');
+        heads[i].style.display = any ? '' : 'none';
+        grids[i].style.display = any ? '' : 'none';
+      }
+    });
+  }
+  function doSearch(){
+    var q = searchEl.value.trim().toLowerCase();
+    clearBtn.style.display = q ? 'block' : 'none';
+    document.body.className = '';
+    if(!q){
+      cards.forEach(function(c){ c.classList.remove('hide'); });
+      panes.forEach(function(p){ p.classList.remove('nomatch'); });
+      refreshGroups();
+      return;
+    }
+    var found = 0;
+    cards.forEach(function(c){
+      var hay = (c.getAttribute('data-title') + ' ' + c.getAttribute('data-group') + ' ' + c.getAttribute('data-sec')).toLowerCase();
+      var ok = hay.indexOf(q) !== -1;
+      c.classList.toggle('hide', !ok);
+      if(ok) found++;
+    });
+    panes.forEach(function(p){
+      p.classList.toggle('nomatch', !p.querySelector('.card:not(.hide)'));
+    });
+    refreshGroups();
+    document.body.className = 'searching' + (found ? '' : ' noresults');
+  }
+  searchEl.addEventListener('input', doSearch);
+  searchEl.addEventListener('search', doSearch);
+  clearBtn.addEventListener('click', function(){ searchEl.value=''; doSearch(); });
+})();
+</script>
+</body>
+</html>
